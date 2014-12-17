@@ -15,16 +15,11 @@ class CMU_451_DP_LCS {
     }
 
     static public class DPResult {
-	int x;
-	int y;
 	int[][] state;
-    }
-    
-    public static DPResult compute_lcs(DPInput in) {
-	return compute_lcs(in.s1, in.s2);
+
     }
 
-    public static void dump_lcs_state(int[][] s) {
+    public static void dump_state(int[][] s) {
 	int yy = s.length;
 	int xx = s[0].length;
 	System.out.println("y,x: : " + yy + "," + xx);
@@ -35,6 +30,10 @@ class CMU_451_DP_LCS {
 	    System.out.println("");
 	}
     }
+    
+    public static DPResult compute_lcs(DPInput in) {
+	return compute_lcs(in.s1, in.s2);
+    }
 
     public static DPResult compute_lcs(String s1, String s2) {
 	int yy = s1.length();
@@ -44,23 +43,23 @@ class CMU_451_DP_LCS {
 	for ( int ii = 0; ii < yy; ii++) {
 	    for (int jj=0; jj<xx; jj++) {
 		if (s1.charAt(ii) != s2.charAt(jj)) {
+		    // handle boundary conditions.
 		    int v1 = (ii == 0) ? 0 : state[ii-1][jj];
 		    int v2 = (jj == 0) ? 0 : state[ii][jj-1];
 		    int new_val = Math.max(v1,v2);
 		    state[ii][jj] = new_val;
 		} 
 		if (s1.charAt(ii) == s2.charAt(jj)) {
+		    // again, handle boundary conditions
 		    int prev_val = (ii < 1 || jj < 1)? 0: state[ii-1][jj-1];
 		    state[ii][jj] = 1 + prev_val;
 		}
 	    }
-	    dump_lcs_state(state);
+	    dump_state(state);
 	}
 
 	DPResult res = new DPResult();
 	res.state = state;
-	res.x = xx;
-	res.y = yy;
 	return res;
     }
 
@@ -77,7 +76,9 @@ class CMU_451_DP_LCS {
 
 	DPResult res = compute_lcs(in);
 	if (null != res) {
-	    int len = res.state[res.y-1][res.x-1];
+	    int y = res.state.length-1;
+	    int x = res.state[0].length - 1;
+	    int len = res.state[y][x];
 	    System.out.println("length of longest common substring: " + len);
 	}
     }
